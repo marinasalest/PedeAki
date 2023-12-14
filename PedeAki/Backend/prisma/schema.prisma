@@ -51,7 +51,6 @@ model Restaurantes {
   senha String
   telefone String
   email String
-  categoria String
   avaliacao String
 
   enderecos Enderecos @relation(fields: [id_endereco], references: [id])
@@ -68,13 +67,23 @@ model Produtos {
   name_produto String 
   preco Float
   imagem String
-  categoria String
   descricao String
 
   restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
+  categorias Categorias @relation(fields: [id_categoria], references: [id])
   @@map("produtos")
   id_restaurante String
+  id_categoria String
   pedidos Pedidos[]
+}
+
+//tabela de categorias
+model Categorias {
+  id String @id
+  name String 
+
+  @@map("categorias")
+  produtos Produtos[]
 }
 
 //tabela de pedidos
