@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import multer from 'multer'
 
 import { CreateUsuarioController } from './controllers/usuario/CreateUsuarioController'
 import { AuthUsuarioController } from './controllers/usuario/AuthUsuarioController'
@@ -13,14 +14,22 @@ import DeleteEnderecoController from './controllers/endereco/DeleteEnderecoContr
 
 import CreateCategoriaController from './controllers/categoria/CreateCategoriaController'
 import CategoriaController from './controllers/categoria/CategoriaController'
+import UpdateCategoriaController from './controllers/categoria/UpdateCategoriaController'
+import DeleteCategoriaController from './controllers/categoria/DeleteCategoriaController'
 
 import CreateRestauranteController from './controllers/restaurante/CreateRestauranteController'
 import RestauranteController from './controllers/restaurante/RestauranteController'
+import UpdateRestauranteController from './controllers/restaurante/UpdateRestauranteController'
+import DeleteRestauranteController from './controllers/restaurante/DeleteRestauranteController'
 
 import CreateProdutosController from './controllers/produto/CreateProdutosController'
 
+import uploadConfig from './config/multer'
 
 const router = Router();
+const storage = uploadConfig.upload('./tmp').Storage;
+const upload = multer({ storage });
+
 const createUsuarioController = new CreateUsuarioController();
 const authUsuarioController = new AuthUsuarioController();
 const usuarioController = new UsuarioController;
@@ -34,9 +43,13 @@ const deleteEnderecoController = new DeleteEnderecoController;
 
 const createCategoriaController = new CreateCategoriaController;
 const categoriaController = new CategoriaController;
+const updateCategoriaController = new UpdateCategoriaController;
+const deleteCategoriaController = new DeleteCategoriaController;
 
 const createRestauranteController = new CreateRestauranteController;
 const restauranteController = new RestauranteController;
+const updateRestauranteController = new UpdateRestauranteController;
+const deleteRestauranteController = new DeleteRestauranteController;
 
 const createProdutosController = new CreateProdutosController;
 
@@ -57,11 +70,16 @@ router.delete('/endereco/:id', deleteEnderecoController.deleteEndereco);
 //categoria
 router.post('/categoria', createCategoriaController.createCategoria);
 router.get('/allCategorias', categoriaController.getAllCategorias);
+router.put('/categoria/:id', updateCategoriaController.updateCategoria);
+router.delete('/categoria/:id', deleteCategoriaController.deleteCategoria);
 
 //restaurante
 router.post('/restaurante', createRestauranteController.createRestaurante);
 router.get('/allRestaurantes', restauranteController.getAllRestaurantes);
+router.put('/restaurante/:id', updateRestauranteController.updateRestaurante);
+router.delete('/restaurante/:id', deleteRestauranteController.deleteRestaurante);
 
 //produtos
-router.post('/produto', createProdutosController.createProduto);
+router.post('/produto', upload.single('file'), createProdutosController.createProduto);
+
 export { router };

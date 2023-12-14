@@ -7,23 +7,39 @@ class CreateProdutoController {
       const {
         name_produto,
         preco,
-        imagem,
         descricao,
         restauranteId,
         categoriaId,
       } = req.body;
 
       const produtoService = new CreateProdutosService();
+      if(!req.file) {
+        throw new Error('Imagem não encontrada')
+      } else {
+        const { originalname, filename } = req.file;
+        console.log(filename);
+
+        const produto = await produtoService.createProduto({
+          name_produto,
+          preco,
+          imagem: filename,
+          descricao,
+          restauranteId,
+          categoriaId,
+        });
+
+        res.status(201).json(produto);
+      }
       const produto = await produtoService.createProduto({
         name_produto,
         preco,
-        imagem,
+        imagem: __filename,
         descricao,
         restauranteId,
         categoriaId,
       });
 
-      res.status(201).json({ produto });
+      res.status(201).json({ produto: produto });
     } catch (error) {
       console.error('Error in createProduto:', error);
       res.status(500).json({ error: 'Internal Server Error' });

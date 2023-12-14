@@ -22,7 +22,7 @@ class CreateProdutoService {
       const produto = await prismaClient.produtos.create({
         data: {
           name_produto,
-          preco,
+          preco: Number(preco),
           imagem,
           descricao,
           restaurantes: { connect: { id: restauranteId } }, // Usando connect para relacionar com o restaurante
