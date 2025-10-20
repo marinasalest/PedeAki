@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//tabela de enderecos
+model Enderecos {
+  id String @id @default(uuid())
+  rua String 
+  numero String
+  complemento String
+  bairro String
+  cidade String
+  estado String
+  cep String
+
+  @@map("enderecos")
+  usuarios Usuarios[]
+  restaurantes Restaurantes[]
+}
+
+//tabela de usuarios
+model Usuarios {
+  id String @id @default(uuid())
+  name String 
+  cpf String
+  data_nascimento DateTime
+  email String
+  password String
+
+  enderecos Enderecos @relation(fields: [id_endereco], references: [id])
+  @@map("usuarios")
+  id_endereco String
+  pedidos Pedidos[]
+  pagamentos Pagamentos[]
+}
+
+//tabela de restaurantes
+model Restaurantes {
+  id String @id @default(uuid())
+  name String 
+  cnpj String
+  nome_fantasia String
+  senha String
+  telefone String
+  email String
+  avaliacao String
+
+  enderecos Enderecos @relation(fields: [id_endereco], references: [id])
+  @@map("restaurantes")
+  id_endereco String
+  produtos Produtos[]
+  pedidos Pedidos[]
+  avaliacoes Avaliacoes[]
+}
+
+//tabela de produtos
+model Produtos {
+  id String @id @default(uuid())
+  name_produto String 
+  preco Float
+  imagem String
+  descricao String
+
+  restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
+  categorias Categorias @relation(fields: [id_categoria], references: [id])
+  @@map("produtos")
+  id_restaurante String
+  id_categoria String
+  pedidos Pedidos[]
+}
+
+//tabela de categorias
+model Categorias {
+  id String @id
+  name String 
+
+  @@map("categorias")
+  produtos Produtos[]
+}
+
+//tabela de pedidos
+model Pedidos {
+  id String @id @default(uuid())
+  data_pedido DateTime
+  quantidade Int
+  total Float
+  descricao String
+
+  restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
+  produtos Produtos @relation(fields: [id_produto], references: [id])
+  usuarios Usuarios @relation(fields: [id_usuario], references: [id])
+  @@map("pedidos")
+  id_restaurante String
+  id_produto String
+  id_usuario String
+  pagamentos Pagamentos[]
+}
+
+//tabela de avaliacoes
+model Avaliacoes {
+  id String @id @default(uuid())
+  nota Int
+  comentario String
+
+  restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
+  @@map("avaliacoes")
+  id_restaurante String
+}
+
+//tabela pagamento
+model Pagamentos {
+  id String @id @default(uuid())
+  forma_pagamento String
+  numero_cartao String
+  nome_titular String
+  validade_cartao String
+  cvv String
+
+  usuarios Usuarios @relation(fields: [id_usuario], references: [id])
+  pedidos Pedidos @relation(fields: [id_pedido], references: [id])
+  @@map("pagamentos")
+  id_usuario String
+  id_pedido String
+}
+
