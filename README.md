@@ -76,39 +76,6 @@ O sistema está configurado para fazer upload de imagens na pasta `tmp/`. O uplo
 - Armazenamento local na pasta `tmp/`
 - Integração com o sistema de produtos
 
-## Estrutura do Projeto
-
-```
-Backend/
-├── src/
-│   ├── config/
-│   │   ├── multer.ts          # Configuração de upload
-│   │   └── swagger.ts         # Configuração do Swagger
-│   ├── controllers/           # Controladores da API
-│   │   ├── categoria/
-│   │   ├── endereco/
-│   │   ├── produto/
-│   │   ├── restaurante/
-│   │   └── usuario/
-│   ├── services/              # Lógica de negócio
-│   │   ├── categoria/
-│   │   ├── endereco/
-│   │   ├── produto/
-│   │   ├── restaurante/
-│   │   └── usuario/
-│   ├── prisma/
-│   │   └── index.ts           # Cliente Prisma
-│   ├── router.ts              # Rotas da API
-│   └── server.ts              # Servidor principal
-├── prisma/
-│   ├── migrations/            # Migrações do banco
-│   └── schema.prisma          # Schema do banco
-├── tmp/                       # Upload de arquivos
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
 ## Tecnologias Utilizadas
 
 ### Backend
