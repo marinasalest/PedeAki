@@ -1,0 +1,88 @@
+
+services:
+  # Banco de Dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: pedeaki-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pedeaki}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pedeaki123}
+      POSTGRES_DB: ${POSTGRES_DB:-pedeaki}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pedeaki}"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - pedeaki-network
+
+  # Backend
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: pedeaki-backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-pedeaki}:${POSTGRES_PASSWORD:-pedeaki123}@postgres:5432/${POSTGRES_DB:-pedeaki}?schema=public
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-pedeaki_jwt_secret_key_2024}
+      NODE_ENV: ${NODE_ENV:-development}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+      - ./Backend/tmp:/app/tmp
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - pedeaki-network
+    restart: unless-stopped
+    command: sh -c "echo '=== INICIANDO BACKEND ===' && pwd && ls -la && echo '=== EXECUTANDO START.JS ===' && node start.js"
+
+  # Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: pedeaki-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:3000
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - pedeaki-network
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  pedeaki-network:
+    driver: bridge
+
+
+
+
+
+
+
+
+
+
+
+

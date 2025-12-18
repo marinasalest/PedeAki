@@ -1,0 +1,11 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" rx="16" fill="#FFF8DC"/>
+  <!-- Prato Chinês -->
+  <ellipse cx="100" cy="100" rx="55" ry="35" fill="#FF6347"/>
+  <ellipse cx="100" cy="100" rx="50" ry="30" fill="#FFD700"/>
+  <rect x="75" y="80" width="50" height="40" fill="#8B4513" rx="5"/>
+  <circle cx="100" cy="105" r="6" fill="#000"/>
+  <ellipse cx="90" cy="95" rx="4" ry="3" fill="#FF6347"/>
+  <ellipse cx="110" cy="95" rx="4" ry="3" fill="#FF6347"/>
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Chinesa</text>
+</svg>

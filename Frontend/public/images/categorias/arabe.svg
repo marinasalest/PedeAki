@@ -1,0 +1,11 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" rx="16" fill="#FFE5E5"/>
+  <!-- Kibe -->
+  <ellipse cx="90" cy="100" rx="25" ry="20" fill="#DAA520"/>
+  <ellipse cx="90" cy="100" rx="22" ry="17" fill="#FFD700"/>
+  <ellipse cx="110" cy="100" rx="25" ry="20" fill="#DAA520"/>
+  <ellipse cx="110" cy="100" rx="22" ry="17" fill="#FFD700"/>
+  <rect x="85" y="120" width="30" height="25" fill="#FFD700" rx="3"/>
+  <circle cx="100" cy="130" r="3" fill="#FF6347"/>
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Árabe</text>
+</svg>

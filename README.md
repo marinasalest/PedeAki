@@ -1,299 +1,210 @@
-# PedeAki - Sistema de Delivery de Comida
+# Pede Aki - Sistema de Delivery de Comida
 
-Sistema completo de delivery de comida desenvolvido com Node.js, TypeScript, Prisma e PostgreSQL.
+Sistema completo de delivery de comida desenvolvido para o mercado brasileiro, conectando clientes a restaurantes com funcionalidades completas de pedidos, pagamentos e acompanhamento em tempo real.
 
-## Sobre o Projeto
+## 📋 Sobre o Projeto
 
-O PedeAki é um sistema completo de delivery de comida que permite aos usuários:
-- Cadastrar-se e fazer login
-- Buscar restaurantes próximos
-- Visualizar cardápios
-- Fazer pedidos
-- Acompanhar entregas
-- Avaliar restaurantes
+O **Pede Aki** é um aplicativo de delivery que tem como objetivo entrar para o mercado de serviços de entrega de alimentos fastfood no Brasil, trazendo facilidade e comodidade aos clientes.
 
-## CRUD Completo
+### Funcionalidades Principais
 
-### Usuários
-- Criar usuário
-- Listar usuários
-- Buscar usuário por ID
-- Atualizar usuário
-- Deletar usuário
-- Login com autenticação
+- ✅ Cadastro e autenticação de usuários (email/senha, Facebook, Google)
+- ✅ Busca de restaurantes próximos com filtros avançados
+- ✅ Visualização de cardápios completos
+- ✅ Sistema de carrinho de compras
+- ✅ Múltiplas formas de pagamento (crédito, débito, PIX, dinheiro, carteira)
+- ✅ Acompanhamento de pedidos em tempo real
+- ✅ Sistema de avaliações e feedback
+- ✅ Cupons de desconto
+- ✅ Gestão de endereços
+- ✅ Upload de imagens de produtos
 
-### Endereços
-- Criar endereço
-- Listar endereços
-- Atualizar endereço
-- Deletar endereço
-
-### Restaurantes
-- Criar restaurante
-- Listar restaurantes
-
-### Produtos
-- Criar produto com upload de imagem
-- Sistema de categorias completo
-
-### Categorias
-- Criar categoria
-- Listar categorias
-- Atualizar categoria
-- Deletar categoria
-
-## Arquitetura do Sistema
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (React/Next.js)                │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │   Login     │  │ Cadastro    │  │ Dashboard   │            │
-│  │   Page      │  │   Page      │  │   Page      │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                │ HTTP/HTTPS
-                                │
-┌─────────────────────────────────────────────────────────────────┐
-│                    BACKEND (Node.js + Express)                  │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │ Controllers │  │  Services   │  │  Middleware │            │
-│  │             │  │             │  │             │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │   Router    │  │   Auth      │  │   Upload    │            │
-│  │             │  │             │  │             │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                │ Prisma ORM
-                                │
-┌─────────────────────────────────────────────────────────────────┐
-│                    BANCO DE DADOS (PostgreSQL)                  │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │  Usuarios  │  │Restaurantes │  │  Produtos   │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
-│  │  Pedidos    │  │ Pagamentos  │  │ Avaliacoes  │            │
-│  └─────────────┘  └─────────────┘  └─────────────┘            │
-│  ┌─────────────┐  ┌─────────────┐                             │
-│  │ Enderecos   │  │ Categorias  │                             │
-│  └─────────────┘  └─────────────┘                             │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## Banco de Dados
-
-### Modelo de Dados
-
-O sistema utiliza um modelo relacional com as seguintes entidades principais:
-
-- **Usuarios** ↔ **Enderecos** (1:1)
-- **Restaurantes** ↔ **Enderecos** (1:1)
-- **Restaurantes** ↔ **Produtos** (1:N)
-- **Categorias** ↔ **Produtos** (1:N)
-- **Usuarios** ↔ **Pedidos** (1:N)
-- **Restaurantes** ↔ **Pedidos** (1:N)
-- **Produtos** ↔ **Pedidos** (1:N)
-
-### Tabelas Principais
-
-- **usuarios** - Dados dos usuários
-- **enderecos** - Endereços dos usuários e restaurantes
-- **restaurantes** - Dados dos restaurantes
-- **produtos** - Cardápio dos restaurantes
-- **categorias** - Categorias de produtos
-- **pedidos** - Pedidos realizados
-- **avaliacoes** - Avaliações dos restaurantes
-- **pagamentos** - Dados de pagamento
-
-## Upload de Arquivos
-
-O sistema está configurado para fazer upload de imagens na pasta `tmp/`. O upload é gerenciado pelo Multer e permite:
-
-- Upload de imagens de produtos
-- Validação de tipos de arquivo
-- Armazenamento local na pasta `tmp/`
-- Integração com o sistema de produtos
-
-## Estrutura do Projeto
-
-```
-Backend/
-├── src/
-│   ├── config/
-│   │   ├── multer.ts          # Configuração de upload
-│   │   └── swagger.ts         # Configuração do Swagger
-│   ├── controllers/           # Controladores da API
-│   │   ├── categoria/
-│   │   ├── endereco/
-│   │   ├── produto/
-│   │   ├── restaurante/
-│   │   └── usuario/
-│   ├── services/              # Lógica de negócio
-│   │   ├── categoria/
-│   │   ├── endereco/
-│   │   ├── produto/
-│   │   ├── restaurante/
-│   │   └── usuario/
-│   ├── prisma/
-│   │   └── index.ts           # Cliente Prisma
-│   ├── router.ts              # Rotas da API
-│   └── server.ts              # Servidor principal
-├── prisma/
-│   ├── migrations/            # Migrações do banco
-│   └── schema.prisma          # Schema do banco
-├── tmp/                       # Upload de arquivos
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias
 
 ### Backend
-- **Node.js** - Runtime JavaScript
-- **TypeScript** - Linguagem de programação
-- **Express.js** - Framework web
-- **Prisma** - ORM para banco de dados
-- **PostgreSQL** - Banco de dados
-- **bcryptjs** - Criptografia de senhas
-- **Multer** - Upload de arquivos
-- **Swagger** - Documentação da API
+- **Node.js** v18
+- **Express** v4.18.2
+- **TypeScript** v5.3.3
+- **Prisma** v5.7.0
+- **PostgreSQL** v15-alpine
+- **JWT** v9.0.3 (Autenticação)
+- **bcryptjs** v2.4.3 (Criptografia)
+- **Multer** v1.4.5-lts.1 (Upload)
+- **Swagger** v6.2.8 (Documentação)
 
-### Ferramentas de Desenvolvimento
-- **ts-node-dev** - Desenvolvimento com hot reload
-- **CORS** - Cross-origin resource sharing
+### Frontend
+- **React** v18.2.0
+- **TypeScript** v4.9.5
+- **React Router DOM** v6.20.1
+- **Axios** v1.6.2
 
-## Instalação
+### Infraestrutura
+- **Docker Desktop** v28.0.1
+- **Docker Compose**
 
-### 1. Clone o repositório
+## 🚀 Como Executar
 
+### Pré-requisitos
+- Docker Desktop instalado e rodando
+- Git
+
+### Execução com Docker (Recomendado)
+
+1. **Clone o repositório**:
 ```bash
 git clone https://github.com/marinasalest/PedeAki.git
 cd PedeAki
 ```
 
-### 2. Instale as dependências
+2. **Inicie os containers**:
+```bash
+docker-compose up -d
+```
 
+3. **Aguarde a inicialização** (o banco será criado automaticamente)
+
+4. **Acesse**:
+   - **API**: http://localhost:3000
+   - **Swagger**: http://localhost:3000/api-docs
+   - **Frontend**: http://localhost:3001
+
+### Execução Local
+
+#### Backend
 ```bash
 cd Backend
 npm install
-```
-
-### 3. Configure o banco de dados
-
-Crie um banco de dados PostgreSQL:
-
-```sql
-CREATE DATABASE pedeaki;
-```
-
-### 4. Configure as variáveis de ambiente
-
-Crie um arquivo `.env` na pasta `Backend`:
-
-```env
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/pedeaki"
-PORT=3000
-```
-
-Substitua `usuario` e `senha` pelas suas credenciais do PostgreSQL.
-
-### 5. Execute as migrações do banco
-
-```bash
-npm run prisma:migrate
-```
-
-### 6. Gere o cliente Prisma
-
-```bash
-npm run prisma:generate
-```
-
-## Executando o Projeto
-
-### Modo Desenvolvimento
-
-```bash
 npm run dev
 ```
 
-O servidor será iniciado na porta 3000 (ou na porta definida na variável PORT).
-
-### Modo Produção
-
+#### Frontend
 ```bash
-npm run build
+cd Frontend
+npm install
 npm start
 ```
 
-### Prisma Studio (Interface do Banco)
+## 📚 Documentação
 
-```bash
-npm run prisma:studio
-```
+Toda a documentação está disponível na pasta `Backend/`:
 
-Acesse `http://localhost:5555` para visualizar e gerenciar os dados do banco.
+- **DOCUMENTACAO_TECNICA_COMPLETA.md** - Referência técnica completa
+- **DOCUMENTACAO_FUNCIONALIDADES_E_REGRAS.md** - Regras de negócio
+- **MODELO_DADOS_FISICO_COMPLETO.md** - Estrutura do banco de dados
+- **SCRIPT_SQL_COMPLETO.sql** - Script SQL para criação do banco
+- **DIAGRAMA_ARQUITETURA_COMPLETO.md** - Diagrama de arquitetura
+- **INDICE_DOCUMENTACAO.md** - Índice de toda a documentação
 
-## Documentação da API
+## 📡 API Endpoints
 
-A documentação completa da API está disponível através do Swagger UI:
-
-**URL:** `http://localhost:3000/api-docs`
+A documentação completa da API está disponível via Swagger:
+**http://localhost:3000/api-docs**
 
 ### Principais Endpoints
 
-#### Usuários
+#### Autenticação
 - `POST /users` - Criar usuário
 - `POST /login` - Login
-- `GET /usuarios` - Listar usuários
-- `GET /usuario/:id` - Buscar usuário por ID
-- `PUT /usuario/:id` - Atualizar usuário
-- `DELETE /usuario/:id` - Deletar usuário
-
-#### Endereços
-- `POST /endereco` - Criar endereço
-- `GET /allEnderecos` - Listar endereços
-- `PUT /endereco/:id` - Atualizar endereço
-- `DELETE /endereco/:id` - Deletar endereço
+- `POST /auth/login/facebook` - Login Facebook
+- `POST /auth/login/google` - Login Google
 
 #### Restaurantes
-- `POST /restaurante` - Criar restaurante
 - `GET /allRestaurantes` - Listar restaurantes
+- `GET /restaurante/:id` - Buscar restaurante
+- `GET /restaurantes/endereco/:enderecoId` - Restaurantes por endereço
 
 #### Produtos
-- `POST /produto` - Criar produto (com upload de imagem)
+- `GET /cardapio/:restauranteId` - Cardápio completo
+- `GET /produtos/restaurante/:restauranteId` - Produtos do restaurante
 
-#### Categorias
-- `POST /categoria` - Criar categoria
-- `GET /allCategorias` - Listar categorias
-- `PUT /categoria/:id` - Atualizar categoria
-- `DELETE /categoria/:id` - Deletar categoria
+#### Pedidos
+- `POST /pedidos` - Criar pedido
+- `GET /pedidos/:pedidoId` - Acompanhar pedido
+- `PUT /pedidos/:pedidoId/status` - Atualizar status
 
-## Scripts Disponíveis
+#### Carrinho
+- `GET /carrinho` - Obter carrinho
+- `POST /carrinho` - Adicionar item
+- `PUT /carrinho/:id` - Atualizar carrinho
 
-```bash
-# Desenvolvimento
-npm run dev              # Inicia o servidor em modo desenvolvimento
+## 🗄️ Banco de Dados
 
-# Produção
-npm run build            # Compila o TypeScript
-npm start                # Inicia o servidor compilado
+- **PostgreSQL** v15-alpine
+- **16 tabelas** principais
+- **Prisma ORM** para gerenciamento
 
-# Banco de Dados
-npm run prisma:generate  # Gera o cliente Prisma
-npm run prisma:migrate   # Executa migrações
-npm run prisma:studio    # Abre o Prisma Studio
+### Conexão
+- **Host**: localhost (ou `postgres` no Docker)
+- **Porta**: 5432
+- **Database**: pedeaki
+- **Usuário**: pedeaki
+- **Senha**: pedeaki123
+
+## 🔐 Autenticação
+
+O sistema utiliza **JWT (JSON Web Tokens)** para autenticação:
+- Token válido por **24 horas**
+- Enviar no header: `Authorization: Bearer {token}`
+- Obter token via `POST /login`
+
+## 📦 Estrutura do Projeto
+
+```
+PedeAki/
+├── Backend/
+│   ├── src/
+│   │   ├── controllers/    # Controllers HTTP
+│   │   ├── services/       # Lógica de negócio
+│   │   ├── middleware/    # Middlewares
+│   │   ├── config/        # Configurações
+│   │   └── utils/         # Utilitários
+│   ├── prisma/
+│   │   └── schema.prisma  # Schema do banco
+│   └── scripts/           # Scripts de seed
+├── Frontend/
+│   └── src/               # Código React
+└── docker-compose.yml     # Orquestração Docker
 ```
 
-## Autor
+## 🧪 Testes
+
+Use o Swagger UI para testar os endpoints:
+- Acesse: http://localhost:3000/api-docs
+- Faça login e copie o token
+- Clique em "Authorize" e cole o token
+- Teste os endpoints protegidos
+
+## 📝 Scripts Disponíveis
+
+### Backend
+```bash
+npm run dev              # Desenvolvimento
+npm run build            # Build
+npm start                # Produção
+npm run seed             # Popular banco
+npm run prisma:studio    # Interface visual do banco
+```
+
+## 🔒 Segurança
+
+- Senhas criptografadas com bcrypt
+- JWT para autenticação
+- Validação de dados em todos os endpoints
+- CORS configurado
+
+## 📄 Licença
+
+Este projeto foi desenvolvido como trabalho acadêmico para a Faculdade Impacta.
+
+## 👤 Autor
 
 **Marina Sales**
 - GitHub: [@marinasalest](https://github.com/marinasalest)
 
+## 🙏 Agradecimentos
+
+Desenvolvido com ❤️ para a Faculdade Impacta
+
 ---
 
-**Desenvolvido com ❤️ para a Faculdade Impacta**
+**Última atualização**: 2024

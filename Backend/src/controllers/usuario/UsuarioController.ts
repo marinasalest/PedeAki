@@ -6,13 +6,29 @@ class UsuarioController {
     try {
       const { id } = req.params;
 
+      // Validação básica do UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(id)) {
+        res.status(400).json({ error: 'ID inválido' });
+        return;
+      }
+
       const readUsuarioService = new UsuarioService();
       const usuario = await readUsuarioService.getUsuarioById(id);
 
       res.status(200).json({ usuario });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro em getUsuarioById:', error);
-      res.status(500).json({ error: 'Erro interno do servidor' });
+      console.error('Stack:', error.stack);
+      
+      // Se o erro for "Usuário não encontrado", retorna 404
+      if (error.message === 'Usuário não encontrado' || error.message?.includes('não encontrado')) {
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
+      }
+      
+      // Caso contrário, retorna erro 500 com mensagem específica
+      res.status(500).json({ error: error.message || 'Erro interno do servidor' });
     }
   }
 

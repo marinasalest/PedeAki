@@ -1,0 +1,13 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" rx="16" fill="#E6E6FA"/>
+  <!-- Açaí -->
+  <ellipse cx="100" cy="100" rx="50" ry="60" fill="#4B0082"/>
+  <ellipse cx="100" cy="100" rx="45" ry="55" fill="#8B008B"/>
+  <circle cx="100" cy="90" r="8" fill="#FFD700"/>
+  <circle cx="90" cy="100" r="6" fill="#FFD700"/>
+  <circle cx="110" cy="100" r="6" fill="#FFD700"/>
+  <circle cx="100" cy="110" r="8" fill="#FFD700"/>
+  <ellipse cx="95" cy="105" rx="5" ry="4" fill="#FF6347"/>
+  <ellipse cx="105" cy="105" rx="5" ry="4" fill="#FF6347"/>
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Açaí</text>
+</svg>

@@ -1,0 +1,11 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" rx="16" fill="#E0F6FF"/>
+  <!-- Sorvete -->
+  <ellipse cx="100" cy="90" rx="40" ry="50" fill="#FFB6C1"/>
+  <ellipse cx="100" cy="90" rx="35" ry="45" fill="#FF69B4"/>
+  <rect x="85" y="130" width="30" height="35" fill="#8B4513" rx="4"/>
+  <circle cx="100" cy="85" r="6" fill="#FFD700"/>
+  <circle cx="95" cy="90" r="4" fill="#FFD700"/>
+  <circle cx="105" cy="90" r="4" fill="#FFD700"/>
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Sorvetes</text>
+</svg>

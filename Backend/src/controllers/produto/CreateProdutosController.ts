@@ -9,40 +9,43 @@ class CreateProdutoController {
         preco,
         descricao,
         restauranteId,
+        id_restaurante, // Aceita ambos os nomes
         categoriaId,
+        id_categoria, // Aceita ambos os nomes
       } = req.body;
 
-      const produtoService = new CreateProdutosService();
-      if(!req.file) {
-        throw new Error('Imagem não encontrada')
-      } else {
-        const { originalname, filename } = req.file;
-        console.log(filename);
+      // Usa restauranteId ou id_restaurante (qualquer um que vier)
+      const restauranteIdFinal = restauranteId || id_restaurante;
+      // Usa categoriaId ou id_categoria (qualquer um que vier)
+      const categoriaIdFinal = categoriaId || id_categoria;
 
-        const produto = await produtoService.createProduto({
-          name_produto,
-          preco,
-          imagem: filename,
-          descricao,
-          restauranteId,
-          categoriaId,
-        });
-
-        res.status(201).json(produto);
+      if (!restauranteIdFinal) {
+        res.status(400).json({ error: 'restauranteId ou id_restaurante é obrigatório' });
+        return;
       }
+
+      if (!categoriaIdFinal) {
+        res.status(400).json({ error: 'categoriaId ou id_categoria é obrigatório' });
+        return;
+      }
+
+      // Imagem é opcional - se não for enviada, será null
+      const imagem = req.file ? req.file.filename : null;
+
+      const produtoService = new CreateProdutosService();
       const produto = await produtoService.createProduto({
         name_produto,
         preco,
-        imagem: __filename,
+        imagem,
         descricao,
-        restauranteId,
-        categoriaId,
+        restauranteId: restauranteIdFinal,
+        categoriaId: categoriaIdFinal,
       });
 
-      res.status(201).json({ produto: produto });
-    } catch (error) {
+      res.status(201).json({ produto });
+    } catch (error: any) {
       console.error('Error in createProduto:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
   }
 }

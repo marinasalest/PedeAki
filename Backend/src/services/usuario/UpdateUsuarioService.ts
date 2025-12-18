@@ -5,7 +5,7 @@ interface UpdateUsuarioRequest {
   id: string;
   name?: string;
   cpf?: string;
-  data_nascimento?: Date;
+  data_nascimento?: Date | null;
   password?: string;
 }
 
@@ -16,7 +16,9 @@ class UpdateUsuarioService {
       
       if (name) updateData.name = name;
       if (cpf) updateData.cpf = cpf;
-      if (data_nascimento) updateData.data_nascimento = data_nascimento;
+      if (data_nascimento) {
+        updateData.data_nascimento = new Date(data_nascimento);
+      }
       if (password) {
         updateData.password = await hash(password, 8);
       }
@@ -34,9 +36,9 @@ class UpdateUsuarioService {
       });
 
       return updatedUser;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in updateUser:', error);
-      throw new Error('Erro ao atualizar usuário.');
+      throw new Error(error.message || 'Erro ao atualizar usuário.');
     }
   }
 }

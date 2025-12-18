@@ -23,6 +23,8 @@ interface EnderecoDetails {
   cidade: string;
   estado: string;
   cep: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 class EnderecoService {
@@ -67,24 +69,26 @@ class EnderecoService {
       }
     }
 
-  async saveEndereco(enderecoDetails: EnderecoDetails): Promise<void> {
-
+  async saveEndereco(enderecoDetails: EnderecoDetails): Promise<string> {
     try {
-    // Salve os dados do endereço no banco de dados usando o Prisma
-    await prisma.enderecos.create({
-      data: {
-        rua: enderecoDetails.rua,
-        numero: enderecoDetails.numero,
-        complemento: enderecoDetails.complemento,
-        bairro: enderecoDetails.bairro,
-        cidade: enderecoDetails.cidade,
-        estado: enderecoDetails.estado,
-        cep: enderecoDetails.cep,
-      },
-    });
-    }catch (error) {
-    console.error('Error in saveEndereco:', error);
-    throw error;
+      // Salve os dados do endereço no banco de dados usando o Prisma
+      const endereco = await prisma.enderecos.create({
+        data: {
+          rua: enderecoDetails.rua,
+          numero: enderecoDetails.numero,
+          complemento: enderecoDetails.complemento || '',
+          bairro: enderecoDetails.bairro,
+          cidade: enderecoDetails.cidade,
+          estado: enderecoDetails.estado,
+          cep: enderecoDetails.cep,
+          latitude: enderecoDetails.latitude || null,
+          longitude: enderecoDetails.longitude || null,
+        },
+      });
+      return endereco.id;
+    } catch (error: any) {
+      console.error('Error in saveEndereco:', error);
+      throw new Error(error.message || 'Erro ao salvar endereço no banco de dados');
     }
   }
 

@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -20,26 +21,36 @@ model Enderecos {
   cidade String
   estado String
   cep String
+  latitude Float?
+  longitude Float?
 
   @@map("enderecos")
   usuarios Usuarios[]
   restaurantes Restaurantes[]
+  pedidos Pedidos[]
 }
 
 //tabela de usuarios
 model Usuarios {
   id String @id @default(uuid())
   name String 
-  cpf String
-  data_nascimento DateTime
-  email String
-  password String
+  cpf String?
+  data_nascimento DateTime?
+  email String @unique
+  password String?
+  facebook_id String? @unique
+  google_id String? @unique
+  provider String? // 'facebook', 'google', 'local'
 
-  enderecos Enderecos @relation(fields: [id_endereco], references: [id])
+  enderecos Enderecos? @relation(fields: [id_endereco], references: [id])
   @@map("usuarios")
-  id_endereco String
+  id_endereco String?
   pedidos Pedidos[]
   pagamentos Pagamentos[]
+  carrinho Carrinho[]
+  usoCupons UsoCupons[]
+  saldo_carteira Float @default(0)
+  cartoesSalvos CartoesSalvos[]
 }
 
 //tabela de restaurantes
@@ -51,14 +62,32 @@ model Restaurantes {
   senha String
   telefone String
   email String
-  avaliacao String
+  avaliacao Float @default(0)
+  foto String?
+  taxa_entrega Float @default(0)
+  tempo_medio_preparo Int @default(30) // em minutos
+  tempo_medio_entrega Int @default(30) // em minutos
+  valor_minimo_pedido Float @default(0)
+  entrega_gratis Boolean @default(false)
+  valor_minimo_entrega_gratis Float?
+  tipo_entrega String @default("propria") // "propria" ou "terceiros"
+  aberto Boolean @default(true)
+  horario_abertura String? // formato "HH:MM"
+  horario_fechamento String? // formato "HH:MM"
+  dias_funcionamento String? // "segunda,terca,quarta,quinta,sexta,sabado,domingo"
+  raio_entrega Float @default(10) // em km
+  ceps_atendidos String? // lista de CEPs separados por vírgula
+  ativo Boolean @default(true)
 
   enderecos Enderecos @relation(fields: [id_endereco], references: [id])
+  categorias Categorias @relation(fields: [id_categoria], references: [id])
   @@map("restaurantes")
   id_endereco String
+  id_categoria String
   produtos Produtos[]
   pedidos Pedidos[]
   avaliacoes Avaliacoes[]
+  cupons Cupons[]
 }
 
 //tabela de produtos
@@ -66,15 +95,26 @@ model Produtos {
   id String @id @default(uuid())
   name_produto String 
   preco Float
-  imagem String
-  descricao String
+  imagem String?
+  descricao String?
+  ingredientes String?
+  alergenicos String?
+  tempo_preparo Int? // em minutos
+  estoque Int? // null = ilimitado
+  quantidade_maxima_pedido Int?
+  disponivel Boolean @default(true)
+  horario_inicio String? // formato "HH:MM"
+  horario_fim String? // formato "HH:MM"
+  permite_personalizacao Boolean @default(false)
+  ativo Boolean @default(true)
 
   restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
   categorias Categorias @relation(fields: [id_categoria], references: [id])
   @@map("produtos")
   id_restaurante String
   id_categoria String
-  pedidos Pedidos[]
+  itensPedido ItensPedido[]
+  opcoesProduto OpcoesProduto[]
 }
 
 //tabela de categorias
@@ -84,50 +124,204 @@ model Categorias {
 
   @@map("categorias")
   produtos Produtos[]
+  restaurantes Restaurantes[]
 }
 
 //tabela de pedidos
 model Pedidos {
   id String @id @default(uuid())
-  data_pedido DateTime
-  quantidade Int
+  data_pedido DateTime @default(now())
+  subtotal Float
+  taxa_entrega Float
+  desconto Float @default(0)
   total Float
-  descricao String
+  observacoes String?
+  status String @default("PENDENTE") // PENDENTE, CONFIRMADO, PREPARANDO, AGUARDANDO_ENTREGADOR, EM_ROTA, ENTREGUE, CANCELADO, TENTATIVA_FALHOU, RECUSADO
+  tempo_estimado_preparo Int? // em minutos
+  tempo_estimado_entrega Int? // em minutos
+  tempo_total_estimado Int? // em minutos
+  tipo_entrega String @default("padrao") // "padrao", "prioritaria", "retirada"
+  valor_troco Float?
+  latitude_entrega Float?
+  longitude_entrega Float?
+  data_confirmacao DateTime?
+  data_preparando DateTime?
+  data_saiu_entrega DateTime?
+  data_em_rota DateTime?
+  data_entregue DateTime?
+  data_cancelado DateTime?
+  motivo_cancelamento String?
 
   restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
-  produtos Produtos @relation(fields: [id_produto], references: [id])
   usuarios Usuarios @relation(fields: [id_usuario], references: [id])
+  enderecos Enderecos @relation(fields: [id_endereco], references: [id])
+  cupons Cupons? @relation(fields: [id_cupom], references: [id])
   @@map("pedidos")
   id_restaurante String
-  id_produto String
   id_usuario String
+  id_endereco String
+  id_cupom String?
+  itensPedido ItensPedido[]
   pagamentos Pagamentos[]
+  avaliacoes Avaliacoes[]
+  historicoStatus HistoricoStatus[]
 }
 
 //tabela de avaliacoes
 model Avaliacoes {
   id String @id @default(uuid())
   nota Int
-  comentario String
+  comentario String?
+  denuncia String? // motivo da denúncia se houver
+  data_avaliacao DateTime @default(now())
 
   restaurantes Restaurantes @relation(fields: [id_restaurante], references: [id])
+  pedidos Pedidos @relation(fields: [id_pedido], references: [id])
   @@map("avaliacoes")
   id_restaurante String
+  id_pedido String @unique
 }
 
 //tabela pagamento
 model Pagamentos {
   id String @id @default(uuid())
-  forma_pagamento String
-  numero_cartao String
-  nome_titular String
-  validade_cartao String
-  cvv String
+  forma_pagamento String // "credito", "debito", "pix", "dinheiro", "carteira"
+  numero_cartao String?
+  nome_titular String?
+  validade_cartao String?
+  cvv String?
+  qr_code_pix String?
+  pix_expira_em DateTime?
+  valor Float
+  status String @default("PENDENTE") // PENDENTE, APROVADO, RECUSADO, EXPIRADO
+  data_aprovacao DateTime?
+  saldo_carteira_usado Float @default(0)
 
   usuarios Usuarios @relation(fields: [id_usuario], references: [id])
   pedidos Pedidos @relation(fields: [id_pedido], references: [id])
   @@map("pagamentos")
   id_usuario String
+  id_pedido String @unique
+}
+
+//tabela de itens do pedido
+model ItensPedido {
+  id String @id @default(uuid())
+  quantidade Int
+  preco_unitario Float
+  subtotal Float
+  observacoes String?
+  personalizacoes String? // JSON com personalizações
+
+  pedidos Pedidos @relation(fields: [id_pedido], references: [id])
+  produtos Produtos @relation(fields: [id_produto], references: [id])
+  @@map("itens_pedido")
   id_pedido String
+  id_produto String
+}
+
+//tabela de opções de produto (adicionais, tamanhos, etc.)
+model OpcoesProduto {
+  id String @id @default(uuid())
+  nome String
+  tipo String // "adicional", "tamanho", "remocao"
+  preco Float @default(0)
+  obrigatorio Boolean @default(false)
+
+  produtos Produtos @relation(fields: [id_produto], references: [id])
+  @@map("opcoes_produto")
+  id_produto String
+}
+
+//tabela de cupons de desconto
+model Cupons {
+  id String @id @default(uuid())
+  codigo String @unique
+  descricao String?
+  tipo_desconto String // "percentual" ou "valor_fixo"
+  valor_desconto Float
+  valor_minimo_pedido Float?
+  data_inicio DateTime
+  data_fim DateTime
+  uso_maximo Int? // null = ilimitado
+  uso_atual Int @default(0)
+  ativo Boolean @default(true)
+  exclusivo_restaurante Boolean @default(false)
+
+  restaurantes Restaurantes? @relation(fields: [id_restaurante], references: [id])
+  pedidos Pedidos[]
+  usoCupons UsoCupons[]
+  @@map("cupons")
+  id_restaurante String?
+}
+
+//tabela de uso de cupons por usuário
+model UsoCupons {
+  id String @id @default(uuid())
+  data_uso DateTime @default(now())
+
+  usuarios Usuarios @relation(fields: [id_usuario], references: [id])
+  cupons Cupons @relation(fields: [id_cupom], references: [id])
+  @@unique([id_usuario, id_cupom])
+  @@map("uso_cupons")
+  id_usuario String
+  id_cupom String
+}
+
+//tabela de histórico de status do pedido
+model HistoricoStatus {
+  id String @id @default(uuid())
+  status_anterior String?
+  status_novo String
+  data_mudanca DateTime @default(now())
+  observacoes String?
+
+  pedidos Pedidos @relation(fields: [id_pedido], references: [id])
+  @@map("historico_status")
+  id_pedido String
+}
+
+//tabela de carrinho (sessão temporária)
+model Carrinho {
+  id String @id @default(uuid())
+  data_criacao DateTime @default(now())
+  data_expiracao DateTime
+  itens String // JSON com itens do carrinho
+
+  usuarios Usuarios @relation(fields: [id_usuario], references: [id])
+  @@map("carrinho")
+  id_usuario String
+}
+
+//tabela de códigos de verificação
+model CodigosVerificacao {
+  id String @id @default(uuid())
+  tipo String // 'email', 'sms', 'whatsapp'
+  destino String // email, telefone ou número WhatsApp
+  codigo_6_digitos String // código de 6 dígitos
+  usado Boolean @default(false)
+  data_criacao DateTime @default(now())
+  data_expiracao DateTime // expira em 10 minutos
+  tentativas Int @default(0)
+  max_tentativas Int @default(3)
+
+  @@map("codigos_verificacao")
+  @@index([destino, codigo_6_digitos])
+}
+
+//tabela de cartões salvos
+model CartoesSalvos {
+  id String @id @default(uuid())
+  numero_cartao String // Últimos 4 dígitos apenas (criptografado)
+  nome_titular String
+  validade_cartao String // MM/AA
+  bandeira String // "Visa", "Mastercard", "Elo", etc.
+  tipo String // "credito" ou "debito"
+  padrao Boolean @default(false) // Cartão padrão do usuário
+  data_criacao DateTime @default(now())
+
+  usuarios Usuarios @relation(fields: [id_usuario], references: [id])
+  @@map("cartoes_salvos")
+  id_usuario String
 }
 

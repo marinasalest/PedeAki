@@ -1,0 +1,13 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" rx="16" fill="#FFFACD"/>
+  <!-- Feijoada -->
+  <ellipse cx="100" cy="100" rx="60" ry="45" fill="#8B4513"/>
+  <ellipse cx="100" cy="100" rx="55" ry="40" fill="#654321"/>
+  <rect x="70" y="75" width="60" height="50" fill="#228B22" rx="5"/>
+  <circle cx="100" cy="100" r="10" fill="#FFD700"/>
+  <ellipse cx="100" cy="90" rx="8" ry="5" fill="#FF6347"/>
+  <ellipse cx="100" cy="110" rx="8" ry="5" fill="#FF6347"/>
+  <circle cx="90" cy="105" r="5" fill="#FF6347"/>
+  <circle cx="110" cy="105" r="5" fill="#FF6347"/>
+  <text x="100" y="185" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Brasileira</text>
+</svg>

@@ -1,0 +1,46 @@
+.restaurantes-page {
+  padding: 20px 0;
+}
+
+.filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.restaurantes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.restaurante-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background: white;
+}
+
+.restaurante-card h4 {
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.nome-fantasia {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+

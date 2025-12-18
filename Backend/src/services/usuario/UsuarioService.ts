@@ -17,7 +17,16 @@ class UsuarioService {
       }
 
       return usuario;
-    } catch (error) {
+    } catch (error: any) {
+      // Se for erro do Prisma relacionado a formato inválido, trata como não encontrado
+      if (error.code === 'P2023' || error.code === 'P2025') {
+        throw new Error('Usuário não encontrado');
+      }
+      // Se já for nosso erro customizado, re-lança
+      if (error.message === 'Usuário não encontrado') {
+        throw error;
+      }
+      // Para outros erros, loga e lança erro genérico
       console.error('Erro em getUsuarioById:', error);
       throw new Error('Erro ao obter dados do usuário.');
     }

@@ -14,9 +14,9 @@ class AuthUsuarioController{
             console.log('Auth result:', auth);
         
             return res.json(auth);
-        }catch (error) {
+        }catch (error: any) {
             console.error('Error in AuthUsuarioController:', error);
-            return res.status(500).json({ message: 'Erro na autenticação do usuário' });
+            return res.status(401).json({ error: error.message || 'Erro na autenticação do usuário' });
         }
     }
 }

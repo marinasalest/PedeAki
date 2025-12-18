@@ -1,0 +1,27 @@
+.App {
+  min-height: 100vh;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+
+
+
+
+
+
+
+
+
+
+
